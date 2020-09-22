@@ -5,6 +5,10 @@ case $1 in
         app-build ${@:2}
         ;;
 
+    up)
+        app-up ${@:2}
+        ;;
+
     *)
         echo "Invalid command $1"
         ;;

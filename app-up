@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Starts services.
+
+source /usr/local/bin/app-env-build
+
+# Create a pod that will hold contain all services.
+#
+# @I Support starting specific services and not others
+#    type     : feature
+#    priority : normal
+#    labels   : service
+echo "Creating the pod ..."
+POD_COMMAND="p pod create --replace --name ${APP_CONTAINER_POD_NAME}"
+for port in ${APP_CONTAINER_PORTS_ARRAY[*]}
+do
+    POD_COMMAND="${POD_COMMAND} --publish $port"
+done
+eval ${POD_COMMAND}
+
+# Run services.
+for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
+do
+    # We first check if we have a folder dedicated to the service.
+    if [ -f $PWD/podman/services/$service/up.sh ]; then
+        echo "Starting service '$service' from custom start script"
+        source $PWD/podman/services/$service/up.sh
+
+    # Otherwise we look for file in the general podman folder.
+    elif [ -f $PWD/podman/$service.up.sh ]; then
+        echo "Starting service '$service' from custom start script"
+        source $PWD/podman/$service.up.sh
+
+    # If dedicated service files do not exist, it must be one of the supported
+    # services.
+    else
+        echo "Starting service '$service' from default start script"
+        source /usr/local/bin/app-up-$service
+    fi
+done
+exit
