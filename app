@@ -5,6 +5,10 @@ case $1 in
         app-build ${@:2}
         ;;
 
+    down)
+        app-down ${@:2}
+        ;;
+
     enter)
         app-enter ${@:2}
         ;;

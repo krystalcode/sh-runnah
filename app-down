@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Stops a project's pod and all of its services.
+#
+# @I Support stopping specific services and not others
+#    type     : feature
+#    priority : normal
+#    labels   : service
+
+source /usr/local/bin/app-env-build
+
+p pod stop ${APP_CONTAINER_POD_NAME}
