@@ -26,6 +26,26 @@ IFS=',' read -r -a APP_CONTAINER_PORTS_ARRAY <<< "${APP_CONTAINER_PORTS}"
 # Detect and validate services.
 # Service validation consists to checking whether the service is supported
 # out-of-the-box, or if it has a custom definition.
+#
+# @I Make supported services configurable
+#    type     : feature
+#    priority : normal
+#    labels   : config, service
+#    notes    : Service definitions/scripts should be loaded from a
+#               configuration folder e.g. `etc/app-pod/conf.d/services`.
+#
+# @I Support service packages e.g. `drupal-pods` etc.
+#    type     : feature
+#    priority : normal
+#    labels   : config, service
+#    notes    : 1. Service definitions via environment variables would define
+#                  the package as there could be multiple packages defining a
+#                  service with the same name.
+#               2. Service packages should be installable i.e. provide a script
+#                  that copies the package, upon installation or later, to the
+#                  right location.
+#               3. Each package should have basic information defined in a YAML
+#                  file e.g. name, supported services, update URL etc.
 IFS=',' read -r -a APP_CONTAINER_SERVICES_ARRAY <<< "${APP_CONTAINER_SERVICES}"
 
 SUPPORTED_SERVICES_ARRAY=(apache,mysql,ngrok,solr)
