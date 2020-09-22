@@ -5,6 +5,10 @@ case $1 in
         app-build ${@:2}
         ;;
 
+    logs)
+        app-logs ${@:2}
+        ;;
+
     up)
         app-up ${@:2}
         ;;

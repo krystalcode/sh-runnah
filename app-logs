@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Displays the logs for the given service.
+
+source /usr/local/bin/app-env-build
+
+if [ $# -eq 0 ]; then
+    echo "Please provide the ID of the service"
+    exit
+fi
+
+SERVICE=$1
+
+if [[ ! "${APP_CONTAINER_SERVICES_ARRAY[@]}" =~ "${SERVICE}" ]]; then
+   printf "Service '"${SERVICE}"' is not known for this project.\n"
+   exit
+fi
+
+# @I Make the log display options configurable
+#    type     : improvement
+#    priority : normal
+#    labels   : config, log
+p logs -f --since 15m ${APP_CONTAINER_POD_NAME}_${SERVICE}
