@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Builds service images.
+
+source /usr/local/bin/app-env-build
+
+for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
+do
+    # We first check if we have a folder dedicated to the service.
+    if [ -f $PWD/podman/services/$service/build.sh ]; then
+        echo "Building service '$service' from custom build script"
+        source $PWD/podman/services/$service/build.sh
+
+    # Otherwise we look for file in the general podman folder.
+    elif [ -f $PWD/podman/$service.build.sh ]; then
+        echo "Building service '$service' from custom build script"
+        source $PWD/podman/$service.build.sh
+
+    # If dedicated build files do not exist, we look for a Buildah file.
+    # @I Make build options configurable
+    #    type     : improvement
+    #    priority : normal
+    #    labels   : build, config
+    elif [ -f $PWD/podman/$service.buildahfile ]; then
+        echo "Building service '$service' from Buildah definition file"
+        buildah bud \
+                --layers="true" \
+                -f $PWD/podman/$service.buildahfile \
+                -t ${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_$service .
+
+    # If a Buildah file does not exist either, we must be using an image;
+    # nothing to build.
+    else
+        echo "No build script or definition for service '$service'"
+    fi
+done

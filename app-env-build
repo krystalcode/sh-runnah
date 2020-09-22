@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+# Prepares environment for other scripts.
+# 1. Loads the environment variables from the project definition.
+# 2. Prepares any derivative environment variables expected by other scripts.
+
+shopt -s expand_aliases
+source ~/.bash_aliases
+
+if [ ! -f $PWD/.env ]; then
+    echo 'No .env environment variable file found for the project.'
+    exit
+fi
+export $(grep -v '^#' $PWD/.env | xargs)
+
+# Require strict variable naming; an error will be thrown if the script
+# references undefined variables.
+set -u
+
+# Detect ports.
+if [ -z ${APP_CONTAINER_PORTS+x} ]; then
+    APP_CONTAINER_PORTS=''
+fi
+IFS=',' read -r -a APP_CONTAINER_PORTS_ARRAY <<< "${APP_CONTAINER_PORTS}"
+
+# Detect and validate services.
+# Service validation consists to checking whether the service is supported
+# out-of-the-box, or if it has a custom definition.
+IFS=',' read -r -a APP_CONTAINER_SERVICES_ARRAY <<< "${APP_CONTAINER_SERVICES}"
+
+SUPPORTED_SERVICES_ARRAY=(apache,mysql,ngrok,solr)
+for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
+do
+    supported=false
+    if [[ "${SUPPORTED_SERVICES_ARRAY[@]}" =~ "$service" ]]; then
+        supported=true
+
+    elif [ -f $PWD/podman/$service.up.sh ]; then
+        supported=true
+    fi
+
+    if [[ "$supported" = false ]]; then
+        printf "Service '"$service"' is not supported and no custom definition was found\n"
+        exit
+    fi
+done
+
+# Prepare derivative environment variables.
+# @I Support custom container name defined in environment variables
+#    type     : improvement
+#    priority : normal
+#    labels   : container, environment
+APP_CONTAINER_VOLUMES_DIR=${PODMAN_VOLUMES_DIR}/${APP_CONTAINER_VOLUMES_SUBPATH}
+APP_CONTAINER_POD_NAME=${APP_GROUP}_${APP_PROJECT}_${APP_ENV}
+APP_IDE_HOME=${PODMAN_VOLUMES_DIR}/apps/ide
