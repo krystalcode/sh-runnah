@@ -1,4 +1,16 @@
 #!/bin/bash
+#
+# Entrypoint; delegates to the right script.
+#
+# @I Add `exec` script for running commands in a service container
+#    type     : feature
+#    priority : normal
+#    labels   : exec
+#
+# @I Add `restart` script for restarting services
+#    type     : feature
+#    priority : normal
+#    labels   : service
 
 case $1 in
     build)
