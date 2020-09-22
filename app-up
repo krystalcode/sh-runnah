@@ -40,7 +40,7 @@ do
     # services.
     else
         echo "Starting service '$service' from default start script"
-        source /usr/local/bin/app-up-$service
+        source /etc/app-pod/conf.d/services/default/$service.up.sh
     fi
 done
 exit

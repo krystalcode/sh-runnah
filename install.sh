@@ -14,10 +14,9 @@
     app-env-build \
     app-logs \
     app-up \
-    app-up-apache \
-    app-up-mysql \
-    app-up-ngrok \
-    app-up-solr \
     app-enter \
     app-down \
     /usr/local/bin/
+
+\cp services/default/* \
+    /etc/app-pod/conf.d/services/default/
