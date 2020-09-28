@@ -29,6 +29,10 @@ case $1 in
         app-logs ${@:2}
         ;;
 
+    restart)
+        app-restart ${@:2}
+        ;;
+
     up)
         app-up ${@:2}
         ;;

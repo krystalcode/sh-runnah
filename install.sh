@@ -15,6 +15,7 @@
     app-enter \
     app-env-build \
     app-logs \
+    app-restart \
     app-up \
     /usr/local/bin/
 
