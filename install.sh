@@ -11,11 +11,11 @@
 
 \cp app \
     app-build \
+    app-down \
+    app-enter \
     app-env-build \
     app-logs \
     app-up \
-    app-enter \
-    app-down \
     /usr/local/bin/
 
 \cp services/default/* \
