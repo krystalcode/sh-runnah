@@ -1,0 +1,6 @@
+ARG BUILD_LAGOON_VERSION
+FROM docker.io/krystalcode/f_lagoon_cli:${BUILD_LAGOON_VERSION}
+
+ARG BUILD_LAGOON_PROJECT
+
+RUN sed -i "s/id_ed25519/id_ed25519 --project ${BUILD_LAGOON_PROJECT}/g" ~/.bashrc.d/lagoon.aliases.sh
