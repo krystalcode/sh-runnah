@@ -35,6 +35,9 @@ do
     POD_COMMAND="${POD_COMMAND} --network $network"
 done
 
+if [ ! -v ${APP_CONTAINER_HOSTNAME+x} ]; then
+    POD_COMMAND="${POD_COMMAND} --hostname ${APP_CONTAINER_HOSTNAME}"
+fi
 eval ${POD_COMMAND}
 
 # Run services.
