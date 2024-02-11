@@ -16,30 +16,30 @@ bin_dir=/usr/local/bin
 
 case $1 in
     build)
-        app-build ${@:2}
+        $bin_dir/app-build "${@:2}"
         ;;
 
     down)
-        app-down ${@:2}
+        $bin_dir/app-down "${@:2}"
         ;;
 
     enter)
-        app-enter ${@:2}
+        $bin_dir/app-enter "${@:2}"
 
     init)
         $bin_dir/app-init "${@:2}"
         ;;
 
     logs)
-        app-logs ${@:2}
+        $bin_dir/app-logs "${@:2}"
         ;;
 
     restart)
-        app-restart ${@:2}
+        $bin_dir/app-restart "${@:2}"
         ;;
 
     up)
-        app-up ${@:2}
+        $bin_dir/app-up "${@:2}"
         ;;
 
     *)
