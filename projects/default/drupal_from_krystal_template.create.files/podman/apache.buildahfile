@@ -1,0 +1,11 @@
+FROM docker.io/krystalcode/drupal:8.1-apache
+
+# Add php configuration related to file uploads.
+#
+# @I Review all php settings
+#   type     : task
+#   priority : low
+#   labels   : devops, security, 1.0.0
+ADD podman/php-application-execution.ini /usr/local/etc/php/conf.d/application-execution.ini
+ADD podman/php-application-uploads.ini /usr/local/etc/php/conf.d/application-uploads.ini
+ADD podman/php-application-errors.ini /usr/local/etc/php/conf.d/application-errors.ini

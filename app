@@ -19,6 +19,10 @@ case $1 in
         $bin_dir/app-build "${@:2}"
         ;;
 
+    create)
+        $bin_dir/app-create "${@:2}"
+        ;;
+
     down)
         $bin_dir/app-down "${@:2}"
         ;;

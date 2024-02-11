@@ -11,6 +11,7 @@
 
 \cp app \
     app-build \
+    app-create \
     app-down \
     app-enter \
     app-env-build \
@@ -22,7 +23,12 @@
 
 \cp services/default/* \
     /etc/app-pod/conf.d/services/default/
+projects_dir_subpath=projects/default
+projects_dir=$config_dir/$projects_dir_subpath
 initializations_dir=$config_dir/$initializations_dir_subpath
+
+\cp -rf $projects_dir_subpath/* \
+    $projects_dir/
 
 \cp -rf $initializations_dir_subpath/* \
     $initializations_dir/

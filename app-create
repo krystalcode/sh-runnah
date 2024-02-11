@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Creates projects.
+
+source /usr/local/bin/app-env-build
+
+filename=${APP_CREATE_TEMPLATE}.create.sh
+
+if [ ! -f /etc/app-pod/conf.d/projects/default/$filename ]; then
+    echo "No '${APP_CREATE_TEMPLATE}' template definition found for the project."
+    exit
+fi
+
+echo "Creating project from default template script"
+source /etc/app-pod/conf.d/projects/default/$filename
