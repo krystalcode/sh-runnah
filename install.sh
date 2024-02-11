@@ -15,17 +15,32 @@
     app-down \
     app-enter \
     app-env-build \
+    app-exec \
     app-init \
     app-logs \
     app-restart \
     app-up \
     /usr/local/bin/
 
-\cp services/default/* \
-    /etc/app-pod/conf.d/services/default/
+config_dir=/etc/app-pod/conf.d
+services_dir_subpath=services/default
+services_dir=$config_dir/$services_dir_subpath
 projects_dir_subpath=projects/default
 projects_dir=$config_dir/$projects_dir_subpath
+initializations_dir_subpath=initializations/default
 initializations_dir=$config_dir/$initializations_dir_subpath
+
+directories=($services_dir $projects_dir $initializations_dir)
+
+for directory in ${directories[@]}
+do
+    if [ ! -d "$directory" ]; then
+        mkdir -p $directory
+    fi
+done
+
+\cp -rf $services_dir_subpath/* \
+    $services_dir/
 
 \cp -rf $projects_dir_subpath/* \
     $projects_dir/
