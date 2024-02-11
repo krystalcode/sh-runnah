@@ -23,6 +23,12 @@ if [ -z ${APP_CONTAINER_PORTS+x} ]; then
 fi
 IFS=',' read -r -a APP_CONTAINER_PORTS_ARRAY <<< "${APP_CONTAINER_PORTS}"
 
+# Detect networks.
+if [ -z ${APP_CONTAINER_NETWORKS+x} ]; then
+    APP_CONTAINER_NETWORKS=''
+fi
+IFS=',' read -r -a APP_CONTAINER_NETWORKS_ARRAY <<< "${APP_CONTAINER_NETWORKS}"
+
 # Detect and validate services.
 # Service validation consists to checking whether the service is supported
 # out-of-the-box, or if it has a custom definition.
