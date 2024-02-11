@@ -43,21 +43,33 @@ eval ${POD_COMMAND}
 # Run services.
 for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
 do
+    # Get the buildahfile path so that we can pass it to the build script.
+    # The `up` script can then determine if we are running from a locally built
+    # or a remote image.
+    buildahfile=
+    if [ -f $PWD/podman/services/$service/buildahfile ]; then
+        buildahfile=$PWD/podman/services/$service/buildahfile
+    elif [ -f $PWD/podman/$service.buildahfile ]; then
+        buildahfile=$PWD/podman/$service.buildahfile
+    elif [ -f /etc/app-pod/conf.d/services/default/$service.buildahfile ]; then
+        buildahfile=/etc/app-pod/conf.d/services/default/$service.buildahfile
+    fi
+
     # We first check if we have a folder dedicated to the service.
     if [ -f $PWD/podman/services/$service/up.sh ]; then
         echo "Starting service '$service' from custom start script"
-        source $PWD/podman/services/$service/up.sh
+        source $PWD/podman/services/$service/up.sh $service "$buildahfile"
 
     # Otherwise we look for file in the general podman folder.
     elif [ -f $PWD/podman/$service.up.sh ]; then
         echo "Starting service '$service' from custom start script"
-        source $PWD/podman/$service.up.sh
+        source $PWD/podman/$service.up.sh $service "$buildahfile"
 
     # If dedicated service files do not exist, it must be one of the supported
     # services.
     else
         echo "Starting service '$service' from default start script"
-        source /etc/app-pod/conf.d/services/default/$service.up.sh
+        source /etc/app-pod/conf.d/services/default/$service.up.sh $service "$buildahfile"
     fi
 done
 exit
