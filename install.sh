@@ -14,6 +14,7 @@
     app-down \
     app-enter \
     app-env-build \
+    app-init \
     app-logs \
     app-restart \
     app-up \
@@ -21,3 +22,7 @@
 
 \cp services/default/* \
     /etc/app-pod/conf.d/services/default/
+initializations_dir=$config_dir/$initializations_dir_subpath
+
+\cp -rf $initializations_dir_subpath/* \
+    $initializations_dir/

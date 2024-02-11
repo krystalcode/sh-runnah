@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Initialize a project environment from the given template.
+
+if [ $# -eq 0 ]; then
+    echo "Please provide the ID of the template"
+    exit
+fi
+
+template=$1
+initializations_dir=/etc/app-pod/conf.d/initializations/default
+echo "$initializations_dir/$template.env"
+
+if [ -f "$initializations_dir/$template.env" ]; then
+     echo "Initializing environment from template '$template'"
+     cp $initializations_dir/$template.env ${PWD}/.env
+else
+   printf "Template '"$template"' is not known.\n"
+   exit
+fi

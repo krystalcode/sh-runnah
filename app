@@ -12,6 +12,8 @@
 #    priority : normal
 #    labels   : service
 
+bin_dir=/usr/local/bin
+
 case $1 in
     build)
         app-build ${@:2}
@@ -23,6 +25,9 @@ case $1 in
 
     enter)
         app-enter ${@:2}
+
+    init)
+        $bin_dir/app-init "${@:2}"
         ;;
 
     logs)
