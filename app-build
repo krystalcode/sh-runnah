@@ -6,15 +6,32 @@ source /usr/local/bin/app-env-build
 
 for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
 do
+    # Get the buildahfile path so that we can pass it to the build script.
+    # If we don't have a buildahfile, we must be running an image from a
+    # registry directly and no build script will be called.
+    buildahfile=
+    if [ -f $PWD/podman/services/$service/buildahfile ]; then
+        buildahfile=$PWD/podman/services/$service/buildahfile
+    elif [ -f $PWD/podman/$service.buildahfile ]; then
+        buildahfile=$PWD/podman/$service.buildahfile
+    elif [ -f /etc/app-pod/conf.d/services/default/$service.buildahfile ]; then
+        buildahfile=/etc/app-pod/conf.d/services/default/$service.buildahfile
+    fi
+
     # We first check if we have a folder dedicated to the service.
     if [ -f $PWD/podman/services/$service/build.sh ]; then
         echo "Building service '$service' from custom build script"
-        source $PWD/podman/services/$service/build.sh
+        source $PWD/podman/services/$service/build.sh $service "$buildahfile"
 
     # Otherwise we look for file in the general podman folder.
     elif [ -f $PWD/podman/$service.build.sh ]; then
         echo "Building service '$service' from custom build script"
-        source $PWD/podman/$service.build.sh
+        source $PWD/podman/$service.build.sh $service "$buildahfile"
+
+    # Otherwise look for a default build file.
+    elif [ -f /etc/app-pod/conf.d/services/default/$service.build.sh ]; then
+        echo "Building service '$service' from custom build script"
+        source /etc/app-pod/conf.d/services/default/$service.build.sh $service "$buildahfile"
 
     # If dedicated build files do not exist, we look for a Buildah file.
     # @I Make build options configurable
