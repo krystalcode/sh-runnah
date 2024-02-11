@@ -29,6 +29,11 @@ case $1 in
 
     enter)
         $bin_dir/app-enter "${@:2}"
+        ;;
+
+    exec)
+        $bin_dir/app-exec "${@:2}"
+        ;;
 
     init)
         $bin_dir/app-init "${@:2}"

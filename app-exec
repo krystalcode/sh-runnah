@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Enters the container.
+
+source /usr/local/bin/app-env-build
+
+if [ $# -eq 0 ]; then
+    echo "Please provide the ID of the service"
+    exit
+fi
+
+if [ $# -eq 1 ]; then
+    echo "Please provide the command to run"
+    exit
+fi
+
+SERVICE=$1
+COMMAND="${@:2}"
+
+# @I Make the shell used for entering a service container customizable
+#    type     : improvement
+#    priority : normal
+#    labels   : config, container
+p exec -it ${APP_CONTAINER_POD_NAME}_${SERVICE} ${COMMAND}
