@@ -54,7 +54,7 @@ IFS=',' read -r -a APP_CONTAINER_NETWORKS_ARRAY <<< "${APP_CONTAINER_NETWORKS}"
 #                  file e.g. name, supported services, update URL etc.
 IFS=',' read -r -a APP_CONTAINER_SERVICES_ARRAY <<< "${APP_CONTAINER_SERVICES}"
 
-SUPPORTED_SERVICES_ARRAY=(apache,mysql,ngrok,solr)
+SUPPORTED_SERVICES_ARRAY=(angular,ansible,apache,composer,caddy,elastic_apm_server,elastic_kibana,elastic_search,fedora,gitlab,gulp,lagoon,mycli,mysql,nextcloud,nginx,ngrok,openapi_generator,pnpm,postal.rabbitmq,sass,solr,stack,varnish)
 for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
 do
     supported=false
