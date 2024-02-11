@@ -21,6 +21,20 @@ for port in ${APP_CONTAINER_PORTS_ARRAY[*]}
 do
     POD_COMMAND="${POD_COMMAND} --publish $port"
 done
+
+# Add the pod to any requested networks.
+for network in ${APP_CONTAINER_NETWORKS_ARRAY[*]}
+do
+    # Create the network first if it doesn't exist.
+    p network exists $network
+    if [ $? -eq 1 ]
+    then
+        p network create $network
+    fi
+
+    POD_COMMAND="${POD_COMMAND} --network $network"
+done
+
 eval ${POD_COMMAND}
 
 # Run services.
