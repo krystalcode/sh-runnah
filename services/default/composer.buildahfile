@@ -1,0 +1,17 @@
+FROM docker.io/php:8.1-cli
+
+    # Install php extensions required by Drupal.
+RUN apt-get update && \
+    apt-get -y install \
+    git \
+    unzip \
+    libcurl4-gnutls-dev \
+    libjpeg-dev libpng-dev \
+    libfreetype6-dev \
+    libonig-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
+    docker-php-ext-configure gd --with-freetype --with-jpeg && \
+    docker-php-ext-install -j$(nproc) mysqli pdo_mysql mbstring gd curl opcache bcmath && \
+    # Install 'composer'.
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
