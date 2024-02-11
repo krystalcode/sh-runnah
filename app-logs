@@ -9,10 +9,10 @@ if [ $# -eq 0 ]; then
     exit
 fi
 
-SERVICE=$1
+service=$1
 
-if [[ ! "${APP_CONTAINER_SERVICES_ARRAY[@]}" =~ "${SERVICE}" ]]; then
-   printf "Service '"${SERVICE}"' is not known for this project.\n"
+if [[ ! "${APP_CONTAINER_SERVICES_ARRAY[@]}" =~ "$service" ]]; then
+   printf "Service '"$service"' is not known for this project.\n"
    exit
 fi
 
@@ -20,4 +20,4 @@ fi
 #    type     : improvement
 #    priority : normal
 #    labels   : config, log
-p logs -f --since 15m ${APP_CONTAINER_POD_NAME}_${SERVICE}
+p logs -f --since 15m ${APP_CONTAINER_POD_NAME}_$service
