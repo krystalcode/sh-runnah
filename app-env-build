@@ -67,7 +67,7 @@ do
 
     if [[ "$supported" = false ]]; then
         printf "Service '"$service"' is not supported and no custom definition was found\n"
-        exit
+        exit 1
     fi
 done
 
