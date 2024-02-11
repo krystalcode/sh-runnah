@@ -38,11 +38,32 @@ do
     #    type     : improvement
     #    priority : normal
     #    labels   : build, config
+    # We first check if we have a folder dedicated to the service.
+    elif [ -f $PWD/podman/services/$service/buildahfile ]; then
+        echo "Building service '$service' from Buildah definition file"
+        buildah bud \
+                --layers \
+                --squash \
+                -f $PWD/podman/$service.buildahfile \
+                -t ${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_$service .
+
+    # Otherwise we look for file in the general podman folder.
     elif [ -f $PWD/podman/$service.buildahfile ]; then
         echo "Building service '$service' from Buildah definition file"
         buildah bud \
-                --layers="true" \
+                --layers \
+                --squash \
                 -f $PWD/podman/$service.buildahfile \
+                -t ${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_$service .
+
+    # If the project does not define a Buildah file, we look for a default
+    # Buildah file.
+    elif [ -f /etc/app-pod/conf.d/services/default/$service.buildahfile ]; then
+        echo "Building service '$service' from default Buildah definition file"
+        buildah bud \
+                --layers \
+                --squash \
+                -f /etc/app-pod/conf.d/services/default/$service.buildahfile \
                 -t ${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_$service .
 
     # If a Buildah file does not exist either, we must be using an image;
