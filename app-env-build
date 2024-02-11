@@ -5,7 +5,7 @@
 # 2. Prepares any derivative environment variables expected by other scripts.
 
 shopt -s expand_aliases
-source ~/.bash_aliases
+source ~/.bashrc.d/aliases.sh
 
 if [ ! -f $PWD/.env ]; then
     echo 'No .env environment variable file found for the project.'
