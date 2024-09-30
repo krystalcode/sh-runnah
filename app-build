@@ -4,7 +4,16 @@
 
 source /usr/local/bin/app-env-build
 
-for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
+BUILD_SERVICES="${@}"
+if [ $# -eq 0 ]; then
+    echo "Building all services"
+    BUILD_SERVICES=("${APP_CONTAINER_SERVICES_ARRAY[@]}")
+else
+    echo "Building requested services only"
+    BUILD_SERVICES="${@}"
+fi
+
+for service in ${BUILD_SERVICES[*]}
 do
     # Get the buildahfile path so that we can pass it to the build script.
     # If we don't have a buildahfile, we must be running an image from a
