@@ -55,21 +55,41 @@ do
         buildahfile=/etc/app-pod/conf.d/services/default/$service.buildahfile
     fi
 
+    # Add environment variables to the service. Variables need to be prefixed
+    # with "APP_CONTAINER_", followed by the capitalized service ID, then double
+    # underscore "__", and then the name of the environment variable.
+    read -r -d '' run_command << COMMAND
+p run
+  --detach
+  --pod ${APP_CONTAINER_POD_NAME}
+  --name ${APP_CONTAINER_POD_NAME}_$service
+COMMAND
+
+    variable_name_prefix="APP_CONTAINER_${service^^}_ENV__"
+    variables=$(compgen -A variable | grep -E "^$variable_name_prefix.*")
+
+    for variable in ${variables[*]}
+    do
+        variable_name=${variable#"$variable_name_prefix"}
+        variable_value="${variable}"
+        run_command="${run_command} --env ${variable_name}=${!variable_value}"
+    done
+
     # We first check if we have a folder dedicated to the service.
     if [ -f $PWD/podman/services/$service/up.sh ]; then
         echo "Starting service '$service' from custom start script"
-        source $PWD/podman/services/$service/up.sh $service "$buildahfile"
+        source $PWD/podman/services/$service/up.sh $service "$buildahfile" "$run_command"
 
     # Otherwise we look for file in the general podman folder.
     elif [ -f $PWD/podman/$service.up.sh ]; then
         echo "Starting service '$service' from custom start script"
-        source $PWD/podman/$service.up.sh $service "$buildahfile"
+        source $PWD/podman/$service.up.sh $service "$buildahfile" "$run_command"
 
     # If dedicated service files do not exist, it must be one of the supported
     # services.
     else
         echo "Starting service '$service' from default start script"
-        source /etc/app-pod/conf.d/services/default/$service.up.sh $service "$buildahfile"
+        source /etc/app-pod/conf.d/services/default/$service.up.sh $service "$buildahfile" "$run_command"
     fi
 done
 exit
