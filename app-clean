@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# Cleans up containers and images for one or more services.
+# Usage:
+# app-clean - Removes the containers and the images for all services.
+# app-clean my_service - Removes the container and the image for service `my_service`
+
+source /usr/local/bin/app-env-build
+
+if [ $# -eq 0 ]; then
+    requested_service=""
+else
+    requested_service=$1
+fi
+
+for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
+do
+    clean=false
+    if [ -z "${requested_service}" ]; then
+        clean=true
+    elif [ "${service}" == "${requested_service}" ]; then
+        clean=true
+    fi
+
+    if [[ "${clean}" = true ]]; then
+        # @I Check whether the container for the service is running and stop it
+        #    type     : feature
+        #    priority : normal
+        #    labels   : service
+        #
+        # @I Check whether the container/image exists
+        #    type     : feature
+        #    priority : normal
+        #    labels   : service
+        p rm ${APP_CONTAINER_POD_NAME}_$service
+        b rmi ${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_$service
+    fi
+done

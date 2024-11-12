@@ -11,6 +11,7 @@
 
 \cp app \
     app-build \
+    app-clean \
     app-create \
     app-down \
     app-enter \
