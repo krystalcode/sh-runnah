@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Stops the container for the given service.
+
+source /usr/local/bin/app-env-build
+
+# @I Support stopping multiple services
+#    type     : improvement
+#    priority : normal
+#    labels   : service
+if [ $# -eq 0 ]; then
+    echo "Please provide the ID of the service"
+    exit
+fi
+
+service=$1
+
+if [[ ! "${APP_CONTAINER_SERVICES_ARRAY[@]}" =~ "$service" ]]; then
+   printf "Service '"$service"' is not known for this project.\n"
+   exit
+fi
+
+p stop ${APP_CONTAINER_POD_NAME}_$service

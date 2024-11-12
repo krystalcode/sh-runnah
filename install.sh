@@ -20,6 +20,7 @@
     app-init \
     app-logs \
     app-restart \
+    app-stop \
     app-up \
     /usr/local/bin/
 

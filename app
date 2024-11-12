@@ -51,6 +51,10 @@ case $1 in
         $bin_dir/app-restart "${@:2}"
         ;;
 
+    stop)
+        $bin_dir/app-stop "${@:2}"
+        ;;
+
     up)
         $bin_dir/app-up "${@:2}"
         ;;
