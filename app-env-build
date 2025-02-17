@@ -69,6 +69,20 @@ do
         printf "Service '"$service"' is not supported and no custom definition was found\n"
         exit 1
     fi
+
+    # Load default variables defined by services.
+    service_variables_filepath="/etc/app-pod/conf.d/services/default/$service.env"
+    if [ -f "${service_variables_filepath}" ]; then
+        while read service_variable; do
+            IFS='=' read -r service_variable_name service_variable_value <<< "${service_variable}"
+            # Load the variable only if no override has been defined.
+            # The overrides would have been loaded at the top of this file from
+            # the project's `.env` file.
+            if [ -z ${!service_variable_name+x} ]; then
+                export ${service_variable}
+            fi
+        done < "$service_variables_filepath"
+    fi
 done
 
 # Prepare derivative environment variables.
