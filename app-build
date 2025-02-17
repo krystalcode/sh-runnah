@@ -47,6 +47,8 @@ do
     #    type     : improvement
     #    priority : normal
     #    labels   : build, config
+    #    notes    : For example, just define build arguments and use the
+    #               service's default Containerfile.
     # We first check if we have a folder dedicated to the service.
     elif [ -f $PWD/podman/services/$service/buildahfile ]; then
         echo "Building service '$service' from Buildah definition file"

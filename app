@@ -11,6 +11,74 @@
 #    type     : feature
 #    priority : normal
 #    labels   : service
+#
+# @I Support default service per project
+#    type     : feature
+#    priority : normal
+#    labels   : service
+#    notes    : The purpose would be to run commands without specifying the
+#               service. We will need to review the different cases and how to
+#               handle commands that operate on the project/all services if a
+#               service is not provided.
+#
+# @I Support defining and running commands per service
+#    type     : feature
+#    priority : normal
+#    labels   : service
+#    notes    : The purpose would be to run commands without having to enter the
+#               container first.
+#               Example: `a command apache my-command --option value`
+#               Example: `a command mysql backup-command --file /path/to/db.sql`
+#
+# @I Support default command per service
+#    type     : feature
+#    priority : normal
+#    labels   : service
+#    notes    : Default command for a service: `a command apache`
+#               Default command for the default service: `a command`
+#
+# @I Consider integrating with `just` for commands
+#    type     : feature
+#    priority : normal
+#    labels   : service
+#
+# @I Globally store project details
+#    type     : feature
+#    priority : normal
+#    labels   : project
+#    notes    : Details stored globally should include path and aliases. Storage
+#               could be a file at the user's home directory
+#               e.g. `${HOME}/.runnah/projects.env`.
+#
+# @I Support project aliases
+#    type     : feature
+#    priority : normal
+#    labels   : project
+#
+# @I Add `goto` command
+#    type     : feature
+#    priority : normal
+#    labels   : command
+#    notes    : Example: `a goto runnah` takes you to the project's root folder.
+#               Example: `a runnah up` runs the `up` command for the project.
+#
+# @I Support passing different arguments/options to different tasks
+#    type     : feature
+#    priority : normal
+#    labels   : service
+#    notes    : Example: app build+up+[enter apache]
+#
+# @I Support smart start mode
+#    type     : feature
+#    priority : normal
+#    labels   : usability
+#    notes    : Detect the status of the project and do the following:
+#               - If the container(s) exists, run the default command on the
+#                 main container.
+#               - Otherwise, if the image(s) exists, start the project, then all
+#                 of the above.
+#               - Otherwise, build the project, then all of the above.
+#               Example: applications/ide/emacs.sh
 
 bin_dir=/usr/local/bin
 

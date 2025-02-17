@@ -1,6 +1,11 @@
 #!/bin/bash
 #
 # Initialize a project environment from the given template.
+#
+# @I Support setting the user initializations directory via environment variable
+#    type     : improvement
+#    priority : low
+#    labels   : initialization
 
 if [ $# -eq 0 ]; then
     echo "Please provide the ID of the template"
