@@ -22,17 +22,21 @@ do
         clean=true
     fi
 
-    if [[ "${clean}" = true ]]; then
-        # @I Check whether the container for the service is running and stop it
-        #    type     : feature
-        #    priority : normal
-        #    labels   : service
-        #
-        # @I Check whether the container/image exists
-        #    type     : feature
-        #    priority : normal
-        #    labels   : service
-        p rm ${APP_CONTAINER_POD_NAME}_$service
-        b rmi ${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_$service
+    if [[ "${clean}" = false ]]; then
+        continue
+    fi
+
+    container=${APP_CONTAINER_POD_NAME}_${service}
+    p container exists $container
+    if [ $? -eq 0 ]; then
+        echo "Removing container $container"
+        p rm $container
+    fi
+
+    image=${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_$service
+    p image exists "$image"
+    if [ $? -eq 0 ]; then
+        echo "Removing image $container"
+        b rmi "$image"
     fi
 done
