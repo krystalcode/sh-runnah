@@ -92,6 +92,22 @@ COMMAND
     # with "APP_CONTAINER_", followed by the capitalized service ID, then
     # "_ENV", then double underscore "__", and then the name of the environment
     # variable.
+    # @I Support base64-encoded variables
+    #    type     : improvement
+    #    priority : low
+    #    labels   : environment
+    #    notes    : This is to support variables that cannot be parsed, such as
+    #               private RSA keys. The encoded value should be added at
+    #               `.env`, prefixed by `base64:`. We should then do the
+    #               decoding it here.
+    # @I Support loading variable value from file
+    #    type     : improvement
+    #    priority : low
+    #    labels   : environment
+    #    notes    : This is to support variables that cannot be parsed, such as
+    #               private RSA keys. The value of the variable should be the
+    #               absolute or relative path to the file that contains the
+    #               value, prefixed by `file:`.
     variable_name_prefix="APP_CONTAINER_${service^^}_ENV__"
     variables=$(compgen -A variable | grep -E "^$variable_name_prefix.*")
 
