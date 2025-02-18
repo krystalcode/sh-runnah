@@ -3,6 +3,9 @@
 service=$1
 buildahfile=$2
 run_command=$3
+image_name=$4
+image_version=$5
+image=$6
 
 backups_volume=""
 if [ ! -v ${APP_CONTAINER_APACHE_BACKUPS_DIR+x} ]; then
@@ -16,7 +19,7 @@ read -r -d '' run_command_addition << COMMAND
   --volume ${PODMAN_VOLUMES_DIR}/global/php/.composer:/root/.composer
   --volume ${PODMAN_VOLUMES_DIR}/global/php/.drush:/root/.drush
   ${backups_volume}
-  ${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_${service}
+  ${image}
   -c 'set -e && cd /var/www/html/scripts/permissions && ./cache.sh && exec apache2-foreground'
 COMMAND
 run_command="${run_command} ${run_command_addition}"
