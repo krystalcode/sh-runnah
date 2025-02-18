@@ -12,43 +12,62 @@ fi
 
 # Create a pod that will hold contain all services.
 #
-# @I Support starting specific services and not others
-#    type     : feature
-#    priority : normal
-#    labels   : service
-#
 # @I Support dependent services
 #    type     : feature
 #    priority : normal
 #    labels   : service
-echo "Creating the pod ..."
-POD_COMMAND="p pod create --replace --name ${APP_CONTAINER_POD_NAME}"
-for port in ${APP_CONTAINER_PORTS_ARRAY[*]}
-do
-    POD_COMMAND="${POD_COMMAND} --publish $port"
-done
+p pod exists ${APP_CONTAINER_POD_NAME}
+if [ $? -eq 0 ]; then
+    echo "Pod already exists"
+else
+    echo "Creating the pod ..."
+    POD_COMMAND="p pod create --replace --name ${APP_CONTAINER_POD_NAME}"
 
-# Add the pod to any requested networks.
-for network in ${APP_CONTAINER_NETWORKS_ARRAY[*]}
-do
-    # Create the network first if it doesn't exist.
-    p network exists $network
-    if [ $? -eq 1 ]
-    then
-        p network create $network
+    # Expose any requested ports.
+    for port in ${APP_CONTAINER_PORTS_ARRAY[*]}
+    do
+        POD_COMMAND="${POD_COMMAND} --publish $port"
+    done
+
+    # Add the pod to any requested networks.
+    for network in ${APP_CONTAINER_NETWORKS_ARRAY[*]}
+    do
+        # Create the network first if it doesn't exist.
+        p network exists $network
+        if [ $? -eq 1 ]
+        then
+            p network create $network
+        fi
+
+        POD_COMMAND="${POD_COMMAND} --network $network"
+    done
+
+    if [ ! -v ${APP_CONTAINER_HOSTNAME+x} ]; then
+        POD_COMMAND="${POD_COMMAND} --hostname ${APP_CONTAINER_HOSTNAME}"
     fi
-
-    POD_COMMAND="${POD_COMMAND} --network $network"
-done
-
-if [ ! -v ${APP_CONTAINER_HOSTNAME+x} ]; then
-    POD_COMMAND="${POD_COMMAND} --hostname ${APP_CONTAINER_HOSTNAME}"
+    eval ${POD_COMMAND}
 fi
-eval ${POD_COMMAND}
+
+if [ $# -eq 0 ]; then
+    requested_service=""
+else
+    requested_service=$1
+fi
 
 # Run services.
 for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
 do
+    run=false
+    if [ -z "${requested_service}" ]; then
+        run=true
+    elif [ "${service}" == "${requested_service}" ]; then
+        run=true
+    fi
+
+    if [[ "${run}" = false ]]; then
+        continue
+    fi
+
     # Get the buildahfile path so that we can pass it to the build script.
     # The `up` script can then determine if we are running from a locally built
     # or a remote image.
@@ -61,16 +80,18 @@ do
         buildahfile=/etc/app-pod/conf.d/services/default/$service.buildahfile
     fi
 
-    # Add environment variables to the service. Variables need to be prefixed
-    # with "APP_CONTAINER_", followed by the capitalized service ID, then double
-    # underscore "__", and then the name of the environment variable.
     read -r -d '' run_command << COMMAND
 p run
   --detach
   --pod ${APP_CONTAINER_POD_NAME}
   --name ${APP_CONTAINER_POD_NAME}_$service
+  --replace
 COMMAND
 
+    # Add environment variables to the service. Variables need to be prefixed
+    # with "APP_CONTAINER_", followed by the capitalized service ID, then
+    # "_ENV", then double underscore "__", and then the name of the environment
+    # variable.
     variable_name_prefix="APP_CONTAINER_${service^^}_ENV__"
     variables=$(compgen -A variable | grep -E "^$variable_name_prefix.*")
 
