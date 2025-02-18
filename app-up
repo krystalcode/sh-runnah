@@ -4,6 +4,12 @@
 
 source /usr/local/bin/app-env-build
 
+# Run the pre-up script, if it exists.
+if [ -f $PWD/podman/pre-up.sh ]; then
+    echo "Running pre-up script ..."
+    source $PWD/podman/pre-up.sh
+fi
+
 # Create a pod that will hold contain all services.
 #
 # @I Support starting specific services and not others
@@ -92,4 +98,9 @@ COMMAND
         source /etc/app-pod/conf.d/services/default/$service.up.sh $service "$buildahfile" "$run_command"
     fi
 done
-exit
+
+# Run the post-up script, if it exists.
+if [ -f $PWD/podman/post-up.sh ]; then
+    echo "Running post-up script ..."
+    source $PWD/podman/post-up.sh
+fi
