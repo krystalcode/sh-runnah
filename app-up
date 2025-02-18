@@ -118,21 +118,47 @@ COMMAND
         run_command="${run_command} --env ${variable_name}=${!variable_value}"
     done
 
+    image_name_variable_name="APP_CONTAINER_${service^^}_IMAGE_NAME"
+    if [ -z ${!image_name_variable_name+x} ]; then
+        image_name=""
+    else
+        image_name=${!image_name_variable_name}
+    fi
+
+    deprecated_variable_name="APP_CONTAINER_${service^^}_VERSION"
+    if [ ! -z ${!deprecated_variable_name+x} ]; then
+        echo "Please update your environment file to use APP_CONTAINER_${service^^}_IMAGE_VERSION instead of APP_CONTAINER_${service^^}_VERSION"
+        exit 1
+    fi
+
+    image_version_variable_name="APP_CONTAINER_${service^^}_IMAGE_VERSION"
+    if [ -z ${!image_version_variable_name+x} ]; then
+        image_version=""
+    else
+        image_version=${!image_version_variable_name}
+    fi
+
+    if [ -z ${buildahfile} ]; then
+        image="${image_name}:${image_version}"
+    else
+        image="${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_${service}"
+    fi
+
     # We first check if we have a folder dedicated to the service.
     if [ -f $PWD/podman/services/$service/up.sh ]; then
         echo "Starting service '$service' from custom start script"
-        source $PWD/podman/services/$service/up.sh $service "$buildahfile" "$run_command"
+        source $PWD/podman/services/$service/up.sh "$service" "$buildahfile" "$run_command" "$image_name" "$image_version" "${image}"
 
     # Otherwise we look for file in the general podman folder.
     elif [ -f $PWD/podman/$service.up.sh ]; then
         echo "Starting service '$service' from custom start script"
-        source $PWD/podman/$service.up.sh $service "$buildahfile" "$run_command"
+        source $PWD/podman/$service.up.sh "$service" "$buildahfile" "$run_command" "$image_name" "$image_version" "${image}"
 
     # If dedicated service files do not exist, it must be one of the supported
     # services.
     else
         echo "Starting service '$service' from default start script"
-        source /etc/app-pod/conf.d/services/default/$service.up.sh $service "$buildahfile" "$run_command"
+        source /etc/app-pod/conf.d/services/default/$service.up.sh "$service" "$buildahfile" "$run_command" "$image_name" "$image_version" "${image}"
     fi
 done
 
