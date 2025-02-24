@@ -80,9 +80,43 @@
 #               - Otherwise, build the project, then all of the above.
 #               Example: applications/ide/emacs.sh
 
+if [ $# -eq 0 ]; then
+    echo "Please provide the action to run"
+    exit
+fi
+
+action=$1
+
+declare -A aliases
+for alias in "${!aliases[@]}"; do
+    if [[ "$action" == "$alias" ]]; then
+        action=${aliases[$alias]}
+        break
+    fi
+done
+
+IFS='+' read -ra TASKS <<< "$action"
+if [ ${#TASKS[*]} -gt '1' ]
+then
+    for task in "${TASKS[@]}"; do
+        $0 ${task} "${@:2}"
+    done
+    exit
+fi
+
+case $action in
+    build|create|clean|down|enter|exec|init|logs|restart|stop|up)
+        echo "Running the $action task"
+        ;;
+    *)
+        echo "Error: Unsupported task $action"
+        exit
+        ;;
+esac
+
 bin_dir=/usr/local/bin
 
-case $1 in
+case $action in
     build)
         $bin_dir/app-build "${@:2}"
         ;;
