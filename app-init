@@ -6,20 +6,46 @@
 #    type     : improvement
 #    priority : low
 #    labels   : initialization
+#
+# @I Ask for confirmation when `.env` already exists in the project
+#    type     : improvement
+#    priority : low
+#    labels   : initialization
 
 if [ $# -eq 0 ]; then
-    echo "Please provide the ID of the template"
-    exit
+    printf "[ERROR] Please provide the ID of the template\n"
+    exit 1
 fi
 
 template=$1
-initializations_dir=/etc/app-pod/conf.d/initializations/default
-echo "$initializations_dir/$template.env"
 
-if [ -f "$initializations_dir/$template.env" ]; then
-     echo "Initializing environment from template '$template'"
-     cp $initializations_dir/$template.env ${PWD}/.env
-else
-   printf "Template '"$template"' is not known.\n"
-   exit
+declare -a initialization_dirs
+declare -a template_groups
+
+user_initialization_dir="${HOME}/app-podman/initializations"
+if [ -d ${user_initialization_dir} ]; then
+    initialization_dirs+=(${user_initialization_dir})
 fi
+
+initialization_dirs+=("/etc/app-pod/conf.d/initializations")
+
+declare -a template_groups
+for initialization_dir in ${initialization_dirs[*]}
+do
+    while IFS=  read -r -d $'\0';
+    do
+        template_groups+=("$REPLY")
+    done < <(find "${initialization_dir}" -mindepth 1 -maxdepth 1 -type d -print0)
+done
+
+for template_group in ${template_groups[*]}
+do
+    if [ -f "${template_group}/${template}.env" ]; then
+        printf "[INFO] Initializing environment from the \"$template\" template at \"${template_group}\"\n"
+        cp "${template_group}"/"${template}".env ${PWD}/.env
+        exit 0
+    fi
+done
+
+printf "[ERROR] Template \"${template}\" is not known\n"
+exit 2
