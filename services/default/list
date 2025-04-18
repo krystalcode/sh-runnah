@@ -1,6 +1,7 @@
 angular
 ansible
 apache
+atuin
 composer
 caddy
 elastic_apm_server
