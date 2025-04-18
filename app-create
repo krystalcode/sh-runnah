@@ -6,10 +6,33 @@ source /usr/local/bin/app-env-build
 
 filename=${APP_CREATE_TEMPLATE}.create.sh
 
-if [ ! -f /etc/app-pod/conf.d/projects/default/$filename ]; then
-    echo "No '${APP_CREATE_TEMPLATE}' template definition found for the project."
-    exit
+declare -a project_dirs
+declare -a template_groups
+
+user_project_dir="${HOME}/app-podman/templates/projects"
+if [ -d ${user_project_dir} ]; then
+    project_dirs+=(${user_project_dir})
 fi
 
-echo "Creating project from default template script"
-source /etc/app-pod/conf.d/projects/default/$filename
+project_dirs+=("/etc/app-pod/conf.d/projects")
+
+declare -a template_groups
+for project_dir in ${project_dirs[*]}
+do
+    while IFS=  read -r -d $'\0';
+    do
+        template_groups+=("$REPLY")
+    done < <(find "${project_dir}" -mindepth 1 -maxdepth 1 -type d -print0)
+done
+
+for template_group in ${template_groups[*]}
+do
+    if [ -f "${template_group}/${filename}" ]; then
+        printf "[INFO] Creating environment from the \"${APP_CREATE_TEMPLATE}\" template at \"${template_group}\"\n"
+        source "${template_group}"/"${filename}"
+        exit 0
+    fi
+done
+
+printf "[ERROR] Template \"${template}\" is not known\n"
+exit 2

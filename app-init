@@ -22,7 +22,7 @@ template=$1
 declare -a initialization_dirs
 declare -a template_groups
 
-user_initialization_dir="${HOME}/app-podman/initializations"
+user_initialization_dir="${HOME}/app-podman/templates/initializations"
 if [ -d ${user_initialization_dir} ]; then
     initialization_dirs+=(${user_initialization_dir})
 fi
