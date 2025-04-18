@@ -118,6 +118,15 @@ COMMAND
         run_command="${run_command} --env ${variable_name}=${!variable_value}"
     done
 
+    # @I Review services that have code for workdir and clean up
+    #    type     : improvement
+    #    priority : low
+    #    labels   : service
+    workdir="APP_CONTAINER_${service^^}_WORKDIR"
+    if [ ! -z ${!workdir+x} ]; then
+        run_command="${run_command} --workdir ${!workdir}"
+    fi
+
     image_name_variable_name="APP_CONTAINER_${service^^}_IMAGE_NAME"
     if [ -z ${!image_name_variable_name+x} ]; then
         image_name=""
