@@ -8,6 +8,7 @@ elastic_apm_server
 elastic_kibana
 elastic_search
 fedora
+ghcup
 gitlab
 gulp
 lagoon
