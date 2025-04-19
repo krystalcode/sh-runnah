@@ -1,19 +1,16 @@
 #!/bin/bash
 
-SERVICE=$1
-BUILDAHFILE=$2
+service=$1
+buildahfile=$2
+run_command=$3
+image_name=$4
+image_version=$5
+image=$6
 
-if [ -z ${BUILDAHFILE} ]; then
-    image=docker.io/krystalcode/f_haskell_stack:latest
-else
-    image=${APP_CONTAINER_REGISTRY}/${APP_CONTAINER_POD_NAME}_${SERVICE}
-fi
-
-p run \
-  --detach \
-  --pod ${APP_CONTAINER_POD_NAME} \
-  --name ${APP_CONTAINER_POD_NAME}_${SERVICE} \
-  --volume ${PWD}:/src \
-  --workdir /src \
-  $image \
+read -r -d '' run_command_addition << COMMAND
+  ${image} \
   sleep infinity
+COMMAND
+run_command="${run_command} ${run_command_addition}"
+
+eval ${run_command}
