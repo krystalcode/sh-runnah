@@ -129,6 +129,12 @@ COMMAND
 
     declare -a automatic_volumes
 
+    working_directory="APP_CONTAINER_${service^^}_WORKING_DIRECTORY"
+    if [ ! -z ${!working_directory+x} ]; then
+        automatic_volumes+=("${PWD}:${!working_directory}")
+        run_command="${run_command} --workdir ${!working_directory}"
+    fi
+
     # @I Move automatic volumes to a separate file as we add more
     #    type     : improvement
     #    priority : low
