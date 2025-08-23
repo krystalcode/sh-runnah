@@ -95,6 +95,16 @@ p run
   --replace
 COMMAND
 
+    # Add runtime options to the command.
+    runtime_options="APP_CONTAINER_${service^^}_RUNTIME_OPTIONS"
+    if [ ! -z ${!runtime_options+x} ]; then
+        IFS=',' read -r -a options <<< "${!runtime_options}"
+        for option in ${options[*]}
+        do
+            run_command="${run_command} --${option}"
+        done
+    fi
+
     # Add environment variables to the service. Variables need to be prefixed
     # with "APP_CONTAINER_", followed by the capitalized service ID, then
     # "_ENV", then double underscore "__", and then the name of the environment
