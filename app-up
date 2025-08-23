@@ -200,9 +200,12 @@ COMMAND
 
     # If dedicated service files do not exist, it must be one of the supported
     # services.
+    elif [ -f /etc/app-pod/conf.d/services/default/$service.up.sh ]; then
+        echo "Starting service '$service' from default service-specific start script"
+        source /etc/app-pod/conf.d/services/default/$service.up.sh "$service" "$buildahfile" "$run_command" "$image_name" "$image_version" "${image}"
     else
         echo "Starting service '$service' from default start script"
-        source /etc/app-pod/conf.d/services/default/$service.up.sh "$service" "$buildahfile" "$run_command" "$image_name" "$image_version" "${image}"
+        source /etc/app-pod/conf.d/services/default/default.up.sh "$service" "$buildahfile" "$run_command" "$image_name" "$image_version" "${image}"
     fi
 done
 
