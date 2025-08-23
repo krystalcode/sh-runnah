@@ -141,13 +141,15 @@ COMMAND
     #    labels   : structure
     atuin_profile="APP_CONTAINER_${service^^}_ATUIN_PROFILE"
     if [ ! -z ${!atuin_profile+x} ]; then
+        printf '[DEBUG] %s %s\n' "${atuin_profile}" "${!atuin_profile}"
         atuin_profile_dir="${PODMAN_VOLUMES_DIR}/global/atuin/${!atuin_profile}"
 
         if [ -d ${atuin_profile_dir} ]; then
-            atuin_data_dir="${APP_CONTAINER_VOLUMES_DIR}/atuin"
+            atuin_data_dir="${APP_CONTAINER_VOLUMES_DIR}/atuin/${service/_/-}"
             if [ ! -d ${atuin_data_dir} ]; then
                 mkdir "${atuin_data_dir}"
             fi
+            printf '[DEBUG] %s %s\n' "${service}" "${atuin_data_dir}"
 	    automatic_volumes+=(
                 "${atuin_profile_dir}:/root/.config/atuin:ro"
                 "${atuin_data_dir}:/root/.local/share/atuin"
