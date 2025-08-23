@@ -55,6 +55,8 @@ else
 fi
 
 # Run services.
+# @I Declare variables as local
+declare -a automatic_volumes
 for service in ${APP_CONTAINER_SERVICES_ARRAY[*]}
 do
     run=false
@@ -67,6 +69,11 @@ do
     if [[ "${run}" = false ]]; then
         continue
     fi
+
+    # Reset variables so that none are carried over from the last service.
+    automatic_volumes=(
+        "/etc/localtime:/etc/localtime:ro"
+    )
 
     # Get the buildahfile path so that we can pass it to the build script.
     # The `up` script can then determine if we are running from a locally built
@@ -126,8 +133,6 @@ COMMAND
     if [ ! -z ${!workdir+x} ]; then
         run_command="${run_command} --workdir ${!workdir}"
     fi
-
-    declare -a automatic_volumes
 
     working_directory="APP_CONTAINER_${service^^}_WORKING_DIRECTORY"
     if [ ! -z ${!working_directory+x} ]; then
