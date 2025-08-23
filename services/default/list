@@ -18,6 +18,7 @@ mysql
 nextcloud
 nginx
 ngrok
+node_cli
 openapi_generator
 pnpm
 postal
