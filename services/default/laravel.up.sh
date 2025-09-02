@@ -7,8 +7,6 @@ image_name=$4
 image_version=$5
 image=$6
 
-printf "[DEBUG] Running from image: ${image}\n"
-
 .runnah.octane-frankenphp.options () {
     local command_options=""
     local variables_options="APP_CONTAINER_${service^^}_OCTANE_FRANKENPHP_OPTIONS"
