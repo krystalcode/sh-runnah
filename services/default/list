@@ -4,6 +4,7 @@ apache
 atuin
 composer
 caddy
+drupal
 elastic_apm_server
 elastic_kibana
 elastic_search
