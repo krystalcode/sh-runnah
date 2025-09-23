@@ -23,6 +23,7 @@ nginx
 ngrok
 node_cli
 openapi_generator
+php
 pnpm
 postal
 rabbitmq
