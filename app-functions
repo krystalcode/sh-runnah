@@ -1,13 +1,42 @@
 #!/bin/bash
 
+.runnah.log() {
+    local message_level=$1
+    local message=$2
+
+    local -a levels=(
+        "error"
+        "warning"
+        "notice"
+        "info"
+        "debug"
+    )
+
+    # Default level.
+    local runnah_level="info"
+    if [ ! -z ${RUNNAH_LOG_LEVEL+x} ]; then
+        runnah_level="${RUNNAH_LOG_LEVEL}"
+    fi
+
+    for level in "${levels[@]}"
+    do
+        if [ "${message_level}" == "${level}" ]; then
+            printf "[%s] %s\n" "${message_level^^}" "${message}" >&2
+            break;
+        elif [ "${runnah_level}" == "${level}" ]; then
+            break;
+        fi
+    done
+}
+
 .runnah.shared.require-commands() {
     local required_commands=("$@")
 
     for required_command in "${required_commands[@]}"
     do
         if ! command -v -- "${required_command}" > /dev/null 2>&1; then
-            printf "[ERROR] The \"%s\" command could not be found." "${required_command}"
-            exit 4
+            .runnah.log "error" "The \"${required_command}\" command could not be found"
+            exit 1
         fi
     done
 }

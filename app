@@ -86,7 +86,7 @@ required_commands=("buildah" "podman")
 .runnah.shared.require-commands "${required_commands[@]}"
 
 if [ $# -eq 0 ]; then
-    echo "Please provide the action to run"
+    .runnah.log "error" "Please provide the action to run"
     exit
 fi
 
@@ -111,10 +111,10 @@ fi
 
 case $action in
     build|create|clean|down|enter|exec|init|logs|restart|stop|up)
-        echo "Running the $action task"
+        .runnah.log "info" "Running the \"${action}\" task"
         ;;
     *)
-        echo "Error: Unsupported task $action"
+        .runnah.log "error" "Unsupported task \"${action}\""
         exit
         ;;
 esac
@@ -167,6 +167,6 @@ case $action in
         ;;
 
     *)
-        echo "Invalid command $1"
+        .runnah.log "error" "Unsupported command \"${1}\""
         ;;
 esac
