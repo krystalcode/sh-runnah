@@ -1,0 +1,13 @@
+#!/bin/bash
+
+.runnah.shared.require-commands() {
+    local required_commands=("$@")
+
+    for required_command in "${required_commands[@]}"
+    do
+        if ! command -v -- "${required_command}" > /dev/null 2>&1; then
+            printf "[ERROR] The \"%s\" command could not be found." "${required_command}"
+            exit 4
+        fi
+    done
+}

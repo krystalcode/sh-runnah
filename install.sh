@@ -17,6 +17,7 @@
     app-enter \
     app-env-build \
     app-exec \
+    app-functions \
     app-init \
     app-logs \
     app-restart \

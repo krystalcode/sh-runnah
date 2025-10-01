@@ -80,6 +80,11 @@
 #               - Otherwise, build the project, then all of the above.
 #               Example: applications/ide/emacs.sh
 
+source "/usr/local/bin/app-functions"
+
+required_commands=("buildah" "podman")
+.runnah.shared.require-commands "${required_commands[@]}"
+
 if [ $# -eq 0 ]; then
     echo "Please provide the action to run"
     exit
