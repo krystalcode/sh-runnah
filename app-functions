@@ -10,6 +10,9 @@
         "notice"
         "info"
         "debug"
+        "debug+v"
+        "debug+vv"
+        "debug+vvv"
     )
 
     # Default level.
